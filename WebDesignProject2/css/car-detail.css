@@ -1,0 +1,19 @@
+
+.car-detail 
+{ display: 
+    grid; 
+    gap: 20px; 
+    grid-template-columns: 1fr; 
+    margin-bottom: 40px;
+}
+.car-detail .gallery img 
+{ width: 100%; 
+    border-radius: 
+    var(--radius);
+}
+.car-detail .info 
+{ background: var(--card); 
+    padding: 20px;
+    border-radius: 
+    var(--radius); 
+}

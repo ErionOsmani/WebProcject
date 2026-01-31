@@ -1,0 +1,61 @@
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --bg: #0b0f12;
+    --card: #111827;
+    --text-main: #ffffff;
+    --text-muted: #9ca3af;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --price-green: #10b981;
+    --radius: 12px;
+}
+body {
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+.container { width: 90%; max-width: 1100px; margin: 0 auto; padding: 0 15px; }
+
+
+header {
+    background-color: 
+    var(--card);
+    padding: 1rem 0; 
+    border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+.navbar { 
+    display: flex; 
+    justify-content: space-between;
+    align-items: center; }
+
+.logo a { 
+    color: #fff;
+    text-decoration: none; 
+    font-size: 1.5rem;
+    font-weight: bold; }
+
+nav ul { 
+    list-style: none; 
+    display: flex;
+    gap: 20px; }
+
+nav a { 
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.95rem; 
+    transition: 0.3s; }
+
+nav a:hover {
+    color: var(--accent);
+}
+
+@media (max-width: 768px) {
+    .navbar { flex-direction: column;
+        gap: 15px; }
+    
+        h1 { font-size: 1.6rem;
+    text-align: center; 
+    margin-top: 20px; }
+}

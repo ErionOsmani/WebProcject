@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>AutoMarket - Shitje Makinash</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
 
@@ -35,8 +36,8 @@
         </div>
     </section>
 
-    <!-- SLIDER -->
-     
+
+    
     <section class="home-slider">
                 <h2>Disa nga veturat më të kërkuara</h2>
 

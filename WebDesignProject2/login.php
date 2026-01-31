@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Login - AutoMarket</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
 <header>
     <div class="container navbar">
         <div class="logo">
-            <a href="index.html">AutoMarket</a>
+            <a href="index.php">AutoMarket</a>
         </div>
         <nav>
             <ul>
-                <li><a href="index.html">Kryefaqja</a></li>
-                <li><a href="about.html">Rreth nesh</a></li>
-                <li><a href="cars.html">Makina</a></li>
-                <li><a href="login.html">Login</a></li>
-                <li><a href="register.html">Register</a></li>
+                <li><a href="index.php">Kryefaqja</a></li>
+                <li><a href="about.php">Rreth nesh</a></li>
+                <li><a href="cars.php">Makina</a></li>
+                <li><a href="login.php">Login</a></li>
+                <li><a href="register.php">Register</a></li>
             </ul>
         </nav>
     </div>

@@ -1,0 +1,17 @@
+
+
+.register-card {
+    background: var(--card);
+    padding: 30px; border-radius: 
+    var(--radius); 
+    width: 100%; 
+    max-width: 520px; 
+    margin: 40px auto; }
+
+.register-card input,.register-card button {
+    
+    width: 100%; 
+    padding: 10px; 
+    margin-top: 10px; 
+    border-radius: 6px; 
+    border: 1px solid rgba(207, 28, 28, 0.03); }

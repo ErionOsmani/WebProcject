@@ -1,0 +1,49 @@
+
+.cars-grid { display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 25px; 
+    margin-bottom: 60px; 
+}
+.card { background-color: var(--card); 
+    border-radius: var(--radius);
+overflow: hidden;
+border: 1px solid rgba(255,255,255,0.05); 
+display: flex; 
+flex-direction: column;
+}
+.card img { 
+    width: 100%;
+    height: 200px; 
+    object-fit: cover; }
+.card-body { 
+    padding: 20px; 
+    flex-grow: 1; }
+.card-body h3 { 
+    font-size: 1.15rem; 
+    margin-bottom: 10px; }
+.card-body .price { 
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--price-green);
+    margin: 15px 0; }
+.btn {
+    display: block; 
+    width: 100%; 
+    padding: 12px; 
+    background-color: 
+    var(--accent); 
+    color: #fff;
+    text-decoration: none; 
+    border-radius: 6px; text-align: center; font-weight: 600; }
+
+@media (
+    max-width: 992px) { 
+        .cars-grid {
+            grid-template-columns: repeat(2, 1fr);
+        } }
+@media (max-width: 768px) 
+{ .cars-grid { 
+    grid-template-columns: 1fr; } 
+    .card img { height: 220px; }
+}
+
