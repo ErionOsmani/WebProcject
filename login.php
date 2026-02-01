@@ -6,8 +6,9 @@
     <title>Login - AutoMarket</title>
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/login.css">
-</head> 
+</head>
 <body>
+
 <header>
     <div class="container navbar">
         <div class="logo">
@@ -28,15 +29,20 @@
 <main>
     <div class="form-wrapper">
         <h2>Kyçu në llogarinë tënde</h2>
-        <form action="#" method="post">
+
+        <form action="#" method="post" onsubmit="return ValidimiLogin()">
             <div class="form-group">
                 <label for="login-email">Email</label>
                 <input type="email" id="login-email" name="email" required>
             </div>
+
             <div class="form-group">
                 <label for="login-password">Fjalëkalimi</label>
                 <input type="password" id="login-password" name="password" required>
             </div>
+
+            <p id="mesazhi-login"></p>
+
             <button type="submit" class="btn btn-block">Login</button>
         </form>
     </div>
@@ -78,5 +84,24 @@
         <p>&copy; 2025 AutoMarket. Të gjitha të drejtat e rezervuara.</p>
     </div>
 </footer>
+
+<script>
+function ValidimiLogin() {
+    var email = document.getElementById("login-email").value;
+    var pass  = document.getElementById("login-password").value;
+
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var passRegex  = /^.{6,}$/;
+
+    if (emailRegex.test(email) && passRegex.test(pass)) {
+        document.getElementById("mesazhi-login").innerText = "";
+        return true;
+    } else {
+        document.getElementById("mesazhi-login").innerText = "Email ose fjalëkalimi gabim";
+        return false;
+    }
+}
+</script>
+
 </body>
 </html>
