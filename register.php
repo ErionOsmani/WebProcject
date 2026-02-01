@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Register - AutoMarket</title>
     <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/register.css">
 </head>
 <body class="register-page">
+
 <header>
     <div class="container navbar">
         <div class="logo">
@@ -27,24 +28,31 @@
 
 <main>
     <div class="form-wrapper">
-        <h2>Krijo llogari të re</h2>
-        <form action="#" method="post">
+        <h2>Krijo llogari</h2>
+
+        <form action="#" method="post" onsubmit="return ValidimiRegister()">
             <div class="form-group">
                 <label for="reg-name">Emri i plotë</label>
                 <input type="text" id="reg-name" name="name" required>
             </div>
+
             <div class="form-group">
                 <label for="reg-email">Email</label>
                 <input type="email" id="reg-email" name="email" required>
             </div>
+
             <div class="form-group">
                 <label for="reg-password">Fjalëkalimi</label>
                 <input type="password" id="reg-password" name="password" required>
             </div>
+
             <div class="form-group">
                 <label for="reg-confirm">Përsërit fjalëkalimin</label>
                 <input type="password" id="reg-confirm" name="confirm_password" required>
             </div>
+
+            <p id="mesazhi-register"></p>
+
             <button type="submit" class="btn btn-block">Register</button>
         </form>
     </div>
@@ -67,7 +75,7 @@
         </div>
 
         <div class="footer-col">
-            <h4>Ndihmë</h4>
+            <h4>Ndihme</h4>
             <ul>
                 <li><a href="contact.php">Kontakt</a></li>
                 <li><a href="login.php">Login</a></li>
@@ -86,5 +94,27 @@
         <p>&copy; 2025 AutoMarket. Të gjitha të drejtat e rezervuara.</p>
     </div>
 </footer>
+
+<script>
+function ValidimiRegister() {
+    var name  = document.getElementById("reg-name").value;
+    var email = document.getElementById("reg-email").value;
+    var pass  = document.getElementById("reg-password").value;
+    var conf  = document.getElementById("reg-confirm").value;
+
+    var nameRegex  = /^[A-Za-zËëÇç\s]{3,}$/;
+    var emailRegex  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var passRegex   = /^.{6,}$/;
+
+    if (nameRegex.test(name) && emailRegex.test(email) && passRegex.test(pass) && pass === conf) {
+        document.getElementById("mesazhi-register").innerText = "";
+        return true;
+    } else {
+        document.getElementById("mesazhi-register").innerText = "Të dhënat nuk janë valide";
+        return false;
+    }
+}
+</script>
+
 </body>
 </html>
