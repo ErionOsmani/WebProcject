@@ -1,3 +1,37 @@
+<?php
+require_once __DIR__ . "/config/db.php";
+require_once __DIR__ . "/models/User.php";
+require_once __DIR__ . "/config/session.php";
+
+
+$error = "";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $email = $_POST["email"] ?? "";
+    $pass  = $_POST["password"] ?? "";
+
+    $db = new Database();
+    $conn = $db->getConnection();
+
+    $userModel = new User($conn);
+    $user = $userModel->login($email, $pass);
+
+    if ($user) {
+        $_SESSION["user"] = $user;
+
+        if ($user["role"] === "admin") {
+            header("Location: admin/dashboard.php");
+            exit;
+        }
+
+        header("Location: index.php");
+        exit;
+    } else {
+        $error = "Email ose fjalëkalimi gabim";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="sq">
 <head>
@@ -29,6 +63,12 @@
 <main>
     <div class="form-wrapper">
         <h2>Kyçu në llogarinë tënde</h2>
+
+        <?php if ($error !== ""): ?>
+            <p style="color:red; margin-bottom:10px;">
+                <?php echo htmlspecialchars($error); ?>
+            </p>
+        <?php endif; ?>
 
         <form action="#" method="post" onsubmit="return ValidimiLogin()">
             <div class="form-group">
@@ -65,7 +105,7 @@
         </div>
 
         <div class="footer-col">
-            <h4>Ndihmë</h4>
+            <h4>Ndihme</h4>
             <ul>
                 <li><a href="contact.php">Kontakt</a></li>
                 <li><a href="login.php">Login</a></li>
