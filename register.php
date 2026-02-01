@@ -1,3 +1,35 @@
+<?php
+require_once __DIR__ . "/config/db.php";
+require_once __DIR__ . "/models/User.php";
+require_once __DIR__ . "/config/session.php";
+
+$error = "";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $fullName = $_POST["name"] ?? "";
+    $email = $_POST["email"] ?? "";
+    $pass = $_POST["password"] ?? "";
+    $confirm = $_POST["confirm_password"] ?? "";
+
+    if ($pass !== $confirm) {
+        $error = "Fjalëkalimet nuk përputhen";
+    } else {
+        $db = new Database();
+        $conn = $db->getConnection();
+
+        $userModel = new User($conn);
+        $ok = $userModel->register($fullName, $email, $pass);
+
+        if ($ok) {
+            header("Location: login.php");
+            exit;
+        } else {
+            $error = "Regjistrimi dështoi. Kontrollo të dhënat ose email-in";
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="sq">
 <head>
@@ -30,6 +62,12 @@
     <div class="form-wrapper">
         <h2>Krijo llogari</h2>
 
+        <?php if ($error !== ""): ?>
+            <p style="color:red; margin-bottom:10px;">
+                <?php echo htmlspecialchars($error); ?>
+            </p>
+        <?php endif; ?>
+
         <form action="#" method="post" onsubmit="return ValidimiRegister()">
             <div class="form-group">
                 <label for="reg-name">Emri i plotë</label>
@@ -53,7 +91,7 @@
 
             <p id="mesazhi-register"></p>
 
-            <button type="submit" class="btn btn-block">Register</button>
+            <button type="submit" class="btn">Regjistrohu</button>
         </form>
     </div>
 </main>
@@ -75,7 +113,7 @@
         </div>
 
         <div class="footer-col">
-            <h4>Ndihme</h4>
+            <h4>Ndihmë</h4>
             <ul>
                 <li><a href="contact.php">Kontakt</a></li>
                 <li><a href="login.php">Login</a></li>
@@ -97,22 +135,16 @@
 
 <script>
 function ValidimiRegister() {
-    var name  = document.getElementById("reg-name").value;
-    var email = document.getElementById("reg-email").value;
-    var pass  = document.getElementById("reg-password").value;
-    var conf  = document.getElementById("reg-confirm").value;
-
-    var nameRegex  = /^[A-Za-zËëÇç\s]{3,}$/;
-    var emailRegex  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    var passRegex   = /^.{6,}$/;
-
-    if (nameRegex.test(name) && emailRegex.test(email) && passRegex.test(pass) && pass === conf) {
-        document.getElementById("mesazhi-register").innerText = "";
-        return true;
-    } else {
-        document.getElementById("mesazhi-register").innerText = "Të dhënat nuk janë valide";
+    const pass = document.getElementById('reg-password').value;
+    const confirm = document.getElementById('reg-confirm').value;
+    const msg = document.getElementById('mesazhi-register');
+    msg.style.color = 'red';
+    if (pass !== confirm) {
+        msg.textContent = 'Fjalëkalimet nuk përputhen.';
         return false;
     }
+    msg.textContent = '';
+    return true;
 }
 </script>
 
