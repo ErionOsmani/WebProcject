@@ -1,17 +1,12 @@
 
 
-.register-card {
-    background: var(--card);
-    padding: 30px; border-radius: 
-    var(--radius); 
-    width: 100%; 
-    max-width: 520px; 
-    margin: 40px auto; }
+/* Register form styles (page-scoped) */
+.register-page .form-wrapper { max-width: 520px; margin: 40px auto; padding: 28px; border-radius: var(--radius); background: var(--card); border:1px solid rgba(255,255,255,0.06); box-shadow: 0 8px 30px rgba(2,6,23,0.6); }
+.register-page .form-wrapper h2 { margin-bottom: 14px; }
+.register-page .form-group { margin-bottom: 12px; }
+.register-page .form-group label { display:block; color:var(--text-muted); margin-bottom:6px; }
+.register-page .form-group input { width:100%; padding: 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.05); background:transparent; color:var(--text-main); }
+.register-page .btn.btn-block { display:block; width:100%; padding:12px; margin-top:10px; text-align:center; }
 
-.register-card input,.register-card button {
-    
-    width: 100%; 
-    padding: 10px; 
-    margin-top: 10px; 
-    border-radius: 6px; 
-    border: 1px solid rgba(207, 28, 28, 0.03); }
+/* Small screens */
+@media (max-width: 480px) { .register-page .form-wrapper { margin: 20px; padding: 18px; } }

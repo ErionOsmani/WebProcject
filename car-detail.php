@@ -2,10 +2,11 @@
 <html lang="sq">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>BMW 320d 2018 - Detaje - AutoMarket</title>
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/car-detail.css">
-</head>
+</head> 
 <body>
 <header>
     <div class="container navbar">
@@ -30,7 +31,7 @@
 
         <div class="details">
             <div>
-                <img src="./assets/bmw3series2018.jpg" alt="BMW 320d">
+                <img src="./assets/bmw3series2018.jpg" alt="BMW 320d" class="detail-img">
             </div>
             <div>
                 <p><strong>Çmimi:</strong> €18,500</p>
@@ -45,15 +46,46 @@
                     Ideale për udhëtime të gjata dhe përdorim ditor.
                 </p>
 
-                <a href="cars.html" class="btn" style="margin-top:15px; display:inline-block;">&larr; Kthehu te makinat</a>
+                <a href="cars.php" class="back-link">&larr; Kthehu te makinat</a>
             </div>
         </div>
     </section>
 </main>
 
-<footer>
-    <div class="container">
-        <p>&copy; 2025 AutoMarket.</p>
+<footer class="site-footer">
+    <div class="container footer-grid">
+        <div class="footer-col">
+            <a href="index.php" class="footer-logo">AutoMarket</a>
+            <p>Shitje dhe blerje makinash me transparencë dhe shërbim të besueshëm.</p>
+        </div>
+
+        <div class="footer-col">
+            <h4>Lidhje</h4>
+            <ul>
+                <li><a href="index.php">Kryefaqja</a></li>
+                <li><a href="cars.php">Makina</a></li>
+                <li><a href="about.php">Rreth nesh</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>Ndihmë</h4>
+            <ul>
+                <li><a href="contact.php">Kontakt</a></li>
+                <li><a href="login.php">Login</a></li>
+                <li><a href="register.php">Register</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>Kontakt</h4>
+            <p>Email: <a href="mailto:info@automarket.example">info@automarket.example</a></p>
+            <p>Tel: +355 69 000 0000</p>
+        </div>
+    </div>
+
+    <div class="container footer-bottom">
+        <p>&copy; 2025 AutoMarket. Të gjitha të drejtat e rezervuara.</p>
     </div>
 </footer>
 </body>
