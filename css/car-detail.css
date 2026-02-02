@@ -1,6 +1,6 @@
 
 
-.details {
+.details, .car-detail-wrapper {
     display: grid;
     gap: 24px;
     grid-template-columns: 1fr 420px;
@@ -8,7 +8,8 @@
     margin-bottom: 40px;
 }
 .details > div:first-child img,
-.detail-img {
+.detail-img,
+.car-detail-image img {
     width: 100%;
     height: auto;
     border-radius: var(--radius);
@@ -17,14 +18,17 @@
     display: block;
     border: 1px solid rgba(255,255,255,0.03);
 }
-.details > div:last-child {
+.details > div:last-child,
+.car-detail-content {
     background: var(--card);
     padding: 20px;
     border-radius: var(--radius);
 }
+.car-detail-wrapper .btn,
 .back-link {
     display: inline-block;
     margin-top: 15px;
+    margin-bottom: 15px;
     padding: 10px 14px;
     border-radius: 8px;
     background: rgba(37,99,235,0.08);
@@ -33,15 +37,16 @@
     text-decoration: none;
     font-weight: 600;
 }
+.car-detail-wrapper .btn:hover,
 .back-link:hover { background: rgba(37,99,235,0.12); color: var(--accent-hover); }
 
 
 @media (max-width: 992px) {
-    .details { grid-template-columns: 1fr 320px; }
-    .details > div:first-child img, .detail-img { max-height: 380px; }
+    .details, .car-detail-wrapper { grid-template-columns: 1fr 320px; }
+    .details > div:first-child img, .detail-img, .car-detail-image img { max-height: 380px; }
 }
 @media (max-width: 768px) {
-    .details { grid-template-columns: 1fr; }
-    .details > div:first-child img, .detail-img { max-height: 260px; }
-    .details > div:last-child { padding: 16px; }
+    .details, .car-detail-wrapper { grid-template-columns: 1fr; }
+    .details > div:first-child img, .detail-img, .car-detail-image img { max-height: 260px; }
+    .details > div:last-child, .car-detail-content { padding: 16px; }
 }

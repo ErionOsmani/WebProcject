@@ -1,23 +1,50 @@
 <?php
+require_once __DIR__ . "/config/db.php";
 require_once __DIR__ . "/config/session.php";
-$user = currentUser();
-?>
+require_once __DIR__ . "/models/Car.php";
 
+$user = currentUser();
+
+$id = isset($_GET["id"]) ? (int)$_GET["id"] : 0;
+if ($id <= 0) {
+    header("Location: cars.php");
+    exit;
+}
+
+$db = new Database();
+$conn = $db->getConnection();
+
+$carModel = new Car($conn);
+$car = $carModel->findById($id);
+
+if (!$car) {
+    header("Location: cars.php");
+    exit;
+}
+
+$img = trim((string)($car["image"] ?? ""));
+$imgSrc = $img !== "" ? ("uploads/" . $img) : "assets/no-image.png";
+
+$price = number_format((float)$car["price"], 0, ",", ".");
+$mileage = number_format((int)$car["mileage"], 0, " ", " ");
+?>
 <!DOCTYPE html>
 <html lang="sq">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>BMW 320d 2018 - Detaje - AutoMarket</title>
+    <title><?php echo htmlspecialchars($car["name"]); ?> - AutoMarket</title>
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/car-detail.css">
-</head> 
+</head>
 <body>
+
 <header>
     <div class="container navbar">
         <div class="logo">
             <a href="index.php">AutoMarket</a>
         </div>
+
         <nav>
             <ul>
                 <li><a href="index.php">Kryefaqja</a></li>
@@ -25,11 +52,9 @@ $user = currentUser();
                 <li><a href="cars.php">Makina</a></li>
 
                 <?php if ($user): ?>
-                    <li style="font-weight:600;">
-                        <?php echo htmlspecialchars($user["full_name"]); ?>
-                    </li>
+                    <li style="font-weight:600;"><?php echo htmlspecialchars($user["full_name"]); ?></li>
 
-                    <?php if ($user["role"] === "admin"): ?>
+                    <?php if (($user["role"] ?? "") === "admin"): ?>
                         <li><a href="admin/dashboard.php">Dashboard</a></li>
                     <?php endif; ?>
 
@@ -43,68 +68,36 @@ $user = currentUser();
     </div>
 </header>
 
-<main class="container">
-    <section>
-        <h1>BMW 320d 2018</h1>
+<main class="container" style="padding: 30px 0;">
+    <a href="cars.php" class="btn back-link">Kthehu te lista</a>
 
-        <div class="details">
-            <div>
-                <img src="./assets/bmw3series2018.jpg" alt="BMW 320d" class="detail-img">
-            </div>
-            <div>
-                <p><strong>Çmimi:</strong> €18,500</p>
-                <p><strong>Viti:</strong> 2018</p>
-                <p><strong>Karburanti:</strong> Dizel</p>
-                <p><strong>Transmisioni:</strong> Automatik</p>
-                <p><strong>Kilometrazhi:</strong> 120 000 km</p>
-
-                <h3>Përshkrimi</h3>
-                <p>
-                    BMW 320d i mirëmbajtur, servis i plotë, gjendje shumë e mirë teknike dhe vizuale.
-                    Ideale për udhëtime të gjata dhe përdorim ditor.
-                </p>
-
-                <a href="cars.php" class="back-link">&larr; Kthehu te makinat</a>
-            </div>
+    <div class="car-detail-wrapper">
+        <div class="car-detail-image">
+            <img src="<?php echo htmlspecialchars($imgSrc); ?>" alt="">
         </div>
-    </section>
+
+        <div class="car-detail-content">
+            <h2><?php echo htmlspecialchars($car["name"]); ?></h2>
+
+            <p><strong>Çmimi:</strong> €<?php echo $price; ?></p>
+            <p><strong>Viti:</strong> <?php echo htmlspecialchars($car["year"]); ?></p>
+            <p><strong>Karburanti:</strong> <?php echo htmlspecialchars($car["fuel"]); ?></p>
+            <p><strong>Transmisioni:</strong> <?php echo htmlspecialchars($car["transmission"]); ?></p>
+            <p><strong>Kilometrazhi:</strong> <?php echo $mileage; ?> km</p>
+
+            <?php if (!empty($car["description"])): ?>
+                <h3>Përshkrimi</h3>
+                <p><?php echo nl2br(htmlspecialchars($car["description"])); ?></p>
+            <?php endif; ?>
+        </div>
+    </div>
 </main>
 
 <footer class="site-footer">
-    <div class="container footer-grid">
-        <div class="footer-col">
-            <a href="index.php" class="footer-logo">AutoMarket</a>
-            <p>Shitje dhe blerje makinash me transparencë dhe shërbim të besueshëm.</p>
-        </div>
-
-        <div class="footer-col">
-            <h4>Lidhje</h4>
-            <ul>
-                <li><a href="index.php">Kryefaqja</a></li>
-                <li><a href="cars.php">Makina</a></li>
-                <li><a href="about.php">Rreth nesh</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-col">
-            <h4>Ndihmë</h4>
-            <ul>
-                <li><a href="contact.php">Kontakt</a></li>
-                <li><a href="login.php">Login</a></li>
-                <li><a href="register.php">Register</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-col">
-            <h4>Kontakt</h4>
-            <p>Email: <a href="mailto:info@automarket.example">info@automarket.example</a></p>
-            <p>Tel: +355 69 000 0000</p>
-        </div>
-    </div>
-
     <div class="container footer-bottom">
         <p>&copy; 2025 AutoMarket. Të gjitha të drejtat e rezervuara.</p>
     </div>
 </footer>
+
 </body>
 </html>
