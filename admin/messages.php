@@ -27,9 +27,7 @@ $messages = $cm->getAll();
         <div class="admin-logo">
             <a href="../index.php" style="color:#fff; text-decoration:none;">AutoMarket Admin</a>
         </div>
-
         <div class="admin-user">
-            <?php echo htmlspecialchars($user["full_name"]); ?>
             <a href="../logout.php">Logout</a>
         </div>
     </div>
