@@ -1,5 +1,4 @@
 <?php
-// models/Car.php
 
 class Car
 {
@@ -81,7 +80,6 @@ class Car
     if ($name === "" || $fuel === "" || $transmission === "") return false;
     if (!is_numeric($price) || !is_numeric($year) || !is_numeric($mileage)) return false;
 
-    // nëse s’ka foto të re, mos e ndrysho kolonën image
     if ($image === null) {
         $stmt = $this->db->prepare("
             UPDATE cars

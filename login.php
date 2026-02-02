@@ -53,6 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <li><a href="index.php">Kryefaqja</a></li>
                 <li><a href="about.php">Rreth nesh</a></li>
                 <li><a href="cars.php">Makina</a></li>
+                <li><a href="news.php">Lajme</a></li>
                 <li><a href="login.php">Login</a></li>
                 <li><a href="register.php">Register</a></li>
             </ul>

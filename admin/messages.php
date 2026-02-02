@@ -1,22 +1,22 @@
 <?php
 require_once __DIR__ . "/../config/db.php";
 require_once __DIR__ . "/../config/session.php";
-require_once __DIR__ . "/../models/Purchase.php";
+require_once __DIR__ . "/../models/ContactMessage.php";
 
 requireAdmin();
 
 $db = new Database();
 $conn = $db->getConnection();
 
-$purchaseModel = new Purchase($conn);
-$sales = $purchaseModel->getAllWithBuyer();
+$cm = new ContactMessage($conn);
+$messages = $cm->getAll();
 ?>
 <!DOCTYPE html>
 <html lang="sq">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Veturat e Shitura</title>
+    <title>Mesazhet e Kontaktit</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/dashboard.css">
 </head>
@@ -27,7 +27,9 @@ $sales = $purchaseModel->getAllWithBuyer();
         <div class="admin-logo">
             <a href="../index.php" style="color:#fff; text-decoration:none;">AutoMarket Admin</a>
         </div>
+
         <div class="admin-user">
+            <?php echo htmlspecialchars($user["full_name"]); ?>
             <a href="../logout.php">Logout</a>
         </div>
     </div>
@@ -40,44 +42,38 @@ $sales = $purchaseModel->getAllWithBuyer();
         <a href="add-car.php">Shto Veturë</a>
         <a href="cars.php">Menaxho Veturat</a>
         <a href="users.php">Menaxho Përdoruesit</a>
-        <a href="sold-cars.php" class="active">Veturat e shitura</a>
-        <a href="messages.php">Mesazhet e kontaktit</a>
+        <a href="sold-cars.php">Veturat e shitura</a>
+        <a href="messages.php" class="active">Mesazhet e kontaktit</a>
         <a href="news.php">Menaxho News</a>
         <a href="logs.php">Shiko Logs</a>
     </aside>
 
     <main class="admin-content">
-    <h2>Veturat e Shitura</h2>
+    <h2>Mesazhet nga Contact</h2>
 
-    <?php if (empty($sales)): ?>
-        <p>Nuk ka ende vetura të shitura.</p>
+    <?php if (empty($messages)): ?>
+        <p>Nuk ka ende mesazhe.</p>
     <?php else: ?>
         <table border="1" cellpadding="10" cellspacing="0" width="100%">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Makina</th>
-                    <th>Çmimi (€)</th>
-                    <th>Blerësi</th>
+                    <th>Emri</th>
                     <th>Email</th>
-                    <th>Telefoni</th>
-                    <th>Adresa</th>
-                    <th>ID Card</th>
+                    <th>Mesazhi</th>
                     <th>Data</th>
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($sales as $s): ?>
+            <?php foreach ($messages as $m): ?>
                 <tr>
-                    <td><?php echo (int)$s["id"]; ?></td>
-                    <td><?php echo htmlspecialchars($s["car_name"]); ?></td>
-                    <td><?php echo number_format((float)$s["car_price"], 0, ",", "."); ?></td>
-                    <td><?php echo htmlspecialchars($s["buyer_name"]); ?></td>
-                    <td><?php echo htmlspecialchars($s["buyer_email"]); ?></td>
-                    <td><?php echo htmlspecialchars($s["phone"]); ?></td>
-                    <td><?php echo htmlspecialchars($s["address"]); ?></td>
-                    <td><?php echo htmlspecialchars($s["id_card_text"]); ?></td>
-                    <td><?php echo htmlspecialchars($s["purchased_at"]); ?></td>
+                    <td><?php echo (int)$m["id"]; ?></td>
+                    <td><?php echo htmlspecialchars($m["name"]); ?></td>
+                    <td><?php echo htmlspecialchars($m["email"]); ?></td>
+                    <td style="max-width:520px;">
+                        <?php echo nl2br(htmlspecialchars($m["message"])); ?>
+                    </td>
+                    <td><?php echo htmlspecialchars($m["created_at"]); ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

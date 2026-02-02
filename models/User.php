@@ -82,4 +82,13 @@ public function delete(int $id): bool
             "role" => $user["role"]
         ];
     }
+
+    public function findById(int $id): ?array
+{
+    $stmt = $this->db->prepare("SELECT id, full_name, email, role FROM users WHERE id = ? LIMIT 1");
+    $stmt->execute([$id]);
+    $u = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $u ?: null;
+}
+
 }

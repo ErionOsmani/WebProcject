@@ -51,8 +51,9 @@ $mileage = number_format((int)$car["mileage"], 0, " ", " ");
                 <li><a href="index.php">Kryefaqja</a></li>
                 <li><a href="about.php">Rreth nesh</a></li>
                 <li><a href="cars.php">Makina</a></li>
+                <li><a href="news.php">Lajme</a></li>
 
-                <?php if ($user): ?>
+                <?php if ($user): ?> 
                     <li style="font-weight:600;"><?php echo htmlspecialchars($user["full_name"]); ?></li>
 
                     <?php if (($user["role"] ?? "") === "admin"): ?>

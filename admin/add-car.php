@@ -2,12 +2,20 @@
 require_once __DIR__ . "/../config/db.php";
 require_once __DIR__ . "/../config/session.php";
 require_once __DIR__ . "/../models/Car.php";
+require_once __DIR__ . "/../models/AdminLog.php";
 
 requireAdmin();
 
 $user = currentUser();
 $error = "";
 $success = "";
+
+
+$db = new Database();
+$conn = $db->getConnection();
+
+$carModel = new Car($conn);
+$logModel = new AdminLog($conn);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
@@ -27,27 +35,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if (!empty($_FILES["image"]["name"])) {
             $tmp = $_FILES["image"]["tmp_name"];
-            $size = $_FILES["image"]["size"];
+            $size = (int)$_FILES["image"]["size"];
             $type = mime_content_type($tmp);
 
-            if (!in_array($type, ["image/jpeg", "image/png", "image/webp"])) {
+            if (!in_array($type, ["image/jpeg", "image/png", "image/webp"], true)) {
                 $error = "Lejohen vetëm JPG, PNG ose WEBP.";
             } elseif ($size > 2 * 1024 * 1024) {
                 $error = "Foto është shumë e madhe (max 2MB).";
             } else {
-                $ext = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
-                $imageName = "car_" . time() . "." . $ext;
+                $ext = strtolower(pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION));
+                $imageName = "car_" . time() . "_" . mt_rand(1000, 9999) . "." . $ext;
 
-                move_uploaded_file($tmp, __DIR__ . "/../uploads/" . $imageName);
+                $uploadDir = __DIR__ . "/../uploads";
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+
+                move_uploaded_file($tmp, $uploadDir . "/" . $imageName);
             }
         }
 
         if ($error === "") {
-            $db = new Database();
-            $conn = $db->getConnection();
-
-            $carModel = new Car($conn);
-
             $data = [
                 "name" => $name,
                 "price" => $price,
@@ -57,11 +65,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 "mileage" => $mileage,
                 "description" => $description,
                 "image" => $imageName,
-                "admin_id" => $user["id"]
+                "admin_id" => (int)$user["id"]
             ];
 
             if ($carModel->create($data)) {
                 $success = "Vetura u shtua me sukses.";
+
+                $details = "Name: $name | Price: $price | Year: $year";
+                $logModel->add((int)$user["id"], "CREATE_CAR", $details);
+
             } else {
                 $error = "Shtimi dështoi.";
             }
@@ -76,23 +88,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Shto Veturë</title>
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
 
-<header>
-    <div class="container navbar">
-        <div class="logo"><a href="../index.php">AutoMarket</a></div>
-        <nav>
-            <ul>
-                <li><a href="dashboard.php">Dashboard</a></li>
-                <li><a href="../cars.php">Makina</a></li>
-                <li><a href="../logout.php">Logout</a></li>
-            </ul>
-        </nav>
+<header class="admin-header">
+    <div class="container admin-nav">
+        <div class="admin-logo">
+            <a href="../index.php" style="color:#fff; text-decoration:none;">AutoMarket Admin</a>
+        </div>
+
+        <div class="admin-user">
+            <?php echo htmlspecialchars($user["full_name"]); ?>
+            <a href="../logout.php">Logout</a>
+        </div>
     </div>
 </header>
 
-<main class="container" style="padding:30px 0; max-width:900px;">
+<div class="admin-layout">
+
+    <aside class="admin-sidebar">
+        <a href="dashboard.php">Dashboard</a>
+        <a href="add-car.php" class="active">Shto Veturë</a>
+        <a href="cars.php">Menaxho Veturat</a>
+        <a href="users.php">Menaxho Përdoruesit</a>
+        <a href="sold-cars.php">Veturat e shitura</a>
+        <a href="messages.php">Mesazhet e kontaktit</a>
+        <a href="news.php">Menaxho News</a>
+        <a href="logs.php">Shiko Logs</a>
+    </aside>
+
+    <main class="admin-content">
     <h2>Shto Veturë</h2>
 
     <?php if ($error): ?>
@@ -147,6 +173,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <button type="submit" class="btn btn-block">Ruaj</button>
     </form>
 </main>
+
+</div>
 
 </body>
 </html>

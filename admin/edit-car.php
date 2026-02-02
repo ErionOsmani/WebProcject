@@ -2,6 +2,7 @@
 require_once __DIR__ . "/../config/db.php";
 require_once __DIR__ . "/../config/session.php";
 require_once __DIR__ . "/../models/Car.php";
+require_once __DIR__ . "/../models/AdminLog.php";
 
 requireAdmin();
 
@@ -15,7 +16,9 @@ if ($id <= 0) {
 
 $db = new Database();
 $conn = $db->getConnection();
+
 $carModel = new Car($conn);
+$logModel = new AdminLog($conn);
 
 $car = $carModel->findById($id);
 if (!$car) {
@@ -38,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($name === "" || $price === "" || $year === "" || $fuel === "" || $transmission === "" || $mileage === "") {
         $error = "Plotëso të gjitha fushat kryesore.";
     } else {
-        // foto e re (opsionale)
+
         $newImageName = null;
         $hasNewImage = !empty($_FILES["image"]["name"]);
 
@@ -68,6 +71,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         if ($error === "") {
+            $old = $car;
+
             $data = [
                 "name" => $name,
                 "price" => $price,
@@ -76,13 +81,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 "transmission" => $transmission,
                 "mileage" => $mileage,
                 "description" => $description,
-                // nëse nuk ka foto të re, e lëmë null që të mos ndryshohet
                 "image" => $hasNewImage ? $newImageName : null
             ];
 
             if ($carModel->update($id, $data)) {
                 $success = "Vetura u përditësua me sukses.";
-                $car = $carModel->findById($id); // rifresko të dhënat
+
+
+                $car = $carModel->findById($id);
+
+                $details = "Car ID: $id";
+                $details .= " | Old: {$old["name"]}, {$old["price"]}, {$old["year"]}";
+                $details .= " | New: {$car["name"]}, {$car["price"]}, {$car["year"]}";
+                if ($hasNewImage) $details .= " | Image updated";
+
+                $logModel->add((int)$user["id"], "UPDATE_CAR", $details);
+
             } else {
                 $error = "Përditësimi dështoi.";
             }
@@ -100,23 +114,37 @@ $imgSrc = $img !== "" ? ("../uploads/" . $img) : "../assets/no-image.png";
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Edit Car - Admin</title>
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
 
-<header>
-    <div class="container navbar">
-        <div class="logo"><a href="../index.php">AutoMarket</a></div>
-        <nav>
-            <ul>
-                <li><a href="dashboard.php">Dashboard</a></li>
-                <li><a href="../cars.php">Makina</a></li>
-                <li><a href="../logout.php">Logout</a></li>
-            </ul>
-        </nav>
+<header class="admin-header">
+    <div class="container admin-nav">
+        <div class="admin-logo">
+            <a href="../index.php" style="color:#fff; text-decoration:none;">AutoMarket Admin</a>
+        </div>
+
+        <div class="admin-user">
+            <?php echo htmlspecialchars($user["full_name"]); ?>
+            <a href="../logout.php">Logout</a>
+        </div>
     </div>
 </header>
 
-<main class="container" style="padding:30px 0; max-width:900px;">
+<div class="admin-layout">
+
+    <aside class="admin-sidebar">
+        <a href="dashboard.php">Dashboard</a>
+        <a href="add-car.php">Shto Veturë</a>
+        <a href="cars.php">Menaxho Veturat</a>
+        <a href="users.php">Menaxho Përdoruesit</a>
+        <a href="sold-cars.php">Veturat e shitura</a>
+        <a href="messages.php">Mesazhet e kontaktit</a>
+        <a href="news.php">Menaxho News</a>
+        <a href="logs.php">Shiko Logs</a>
+    </aside>
+
+    <main class="admin-content">
     <h2>Edito Veturën</h2>
 
     <?php if ($error !== ""): ?>
@@ -179,6 +207,8 @@ $imgSrc = $img !== "" ? ("../uploads/" . $img) : "../assets/no-image.png";
         <a href="dashboard.php">Kthehu në Dashboard</a>
     </p>
 </main>
+
+</div>
 
 </body>
 </html>

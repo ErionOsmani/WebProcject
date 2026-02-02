@@ -2,6 +2,7 @@
 require_once __DIR__ . "/../config/db.php";
 require_once __DIR__ . "/../config/session.php";
 require_once __DIR__ . "/../models/User.php";
+require_once __DIR__ . "/../models/AdminLog.php";
 
 requireAdmin();
 
@@ -11,35 +12,63 @@ $db = new Database();
 $conn = $db->getConnection();
 
 $userModel = new User($conn);
+$logModel  = new AdminLog($conn);
 
 $error = "";
 $success = "";
 
-
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["delete_id"])) {
-    $deleteId = (int)$_POST["delete_id"];
+    $deleteId = (int)$_POST["delete_id"]; 
 
     if ($deleteId === (int)$current["id"]) {
         $error = "Nuk mund ta fshish llogarinë tënde.";
     } else {
+
+        $userToDelete = $userModel->findById($deleteId);
+
         if ($userModel->delete($deleteId)) {
             $success = "Përdoruesi u fshi me sukses.";
+
+            $details = "User ID: $deleteId";
+            if ($userToDelete) {
+                $details .= " | Name: " . ($userToDelete["full_name"] ?? "");
+                $details .= " | Email: " . ($userToDelete["email"] ?? "");
+                $details .= " | Role: " . ($userToDelete["role"] ?? "");
+            }
+
+            $logModel->add((int)$current["id"], "DELETE_USER", $details);
+
         } else {
             $error = "Fshirja dështoi.";
         }
     }
 }
 
-
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["role_id"], $_POST["role"])) {
-    $roleId = (int)$_POST["role_id"];
+    $roleId = (int)$_POST["role_id"]; 
     $newRole = $_POST["role"];
 
     if ($roleId === (int)$current["id"]) {
         $error = "Nuk mund ta ndryshosh rolin tënd.";
     } else {
+
+        $oldUser = $userModel->findById($roleId);
+        $oldRole = $oldUser["role"] ?? "";
+
         if ($userModel->updateRole($roleId, $newRole)) {
             $success = "Roli u përditësua me sukses.";
+
+            $details = "User ID: $roleId";
+            if ($oldUser) {
+                $details .= " | Name: " . ($oldUser["full_name"] ?? "");
+                $details .= " | Email: " . ($oldUser["email"] ?? "");
+                $details .= " | Old role: $oldRole | New role: $newRole";
+            } else {
+                $details .= " | Old role: $oldRole | New role: $newRole";
+            }
+
+            $logModel->add((int)$current["id"], "UPDATE_USER_ROLE", $details);
+
         } else {
             $error = "Ndryshimi i rolit dështoi.";
         }
@@ -55,23 +84,36 @@ $users = $userModel->getAll();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Menaxho Përdoruesit</title>
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
 
-<header>
-    <div class="container navbar">
-        <div class="logo"><a href="dashboard.php">Admin Dashboard</a></div>
-        <nav>
-            <ul>
-                <li><a href="dashboard.php">Dashboard</a></li>
-                <li><a href="cars.php">Veturat</a></li>
-                <li><a href="../logout.php">Logout</a></li>
-            </ul>
-        </nav>
+<header class="admin-header">
+    <div class="container admin-nav">
+        <div class="admin-logo">
+            <a href="../index.php" style="color:#fff; text-decoration:none;">AutoMarket Admin</a>
+        </div>
+        <div class="admin-user">
+            <?php echo htmlspecialchars($current["full_name"]); ?>
+            <a href="../logout.php">Logout</a>
+        </div>
     </div>
 </header>
 
-<main class="container" style="padding:30px 0;">
+<div class="admin-layout">
+
+    <aside class="admin-sidebar">
+        <a href="dashboard.php">Dashboard</a>
+        <a href="add-car.php">Shto Veturë</a>
+        <a href="cars.php">Menaxho Veturat</a>
+        <a href="users.php" class="active">Menaxho Përdoruesit</a>
+        <a href="sold-cars.php">Veturat e shitura</a>
+        <a href="messages.php">Mesazhet e kontaktit</a>
+        <a href="news.php">Menaxho News</a>
+        <a href="logs.php">Shiko Logs</a>
+    </aside>
+
+    <main class="admin-content">
     <h2>Menaxho Përdoruesit</h2>
 
     <?php if ($error !== ""): ?>
@@ -127,7 +169,7 @@ $users = $userModel->getAll();
                             <span style="color:#777;">(Ti)</span>
                         <?php else: ?>
                             <form method="post" style="display:inline;"
-                                onsubmit="return confirm('A je i sigurt që do ta fshish këtë përdorues?');">
+                                  onsubmit="return confirm('A je i sigurt që do ta fshish këtë përdorues?');">
                                 <input type="hidden" name="delete_id" value="<?php echo (int)$u["id"]; ?>">
                                 <button type="submit"
                                         style="cursor:pointer; color:#c0392b; background:none; border:none;">
@@ -146,6 +188,8 @@ $users = $userModel->getAll();
         <a href="dashboard.php">Kthehu në Dashboard</a>
     </p>
 </main>
+
+</div>
 
 </body>
 </html>

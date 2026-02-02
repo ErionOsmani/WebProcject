@@ -2,23 +2,37 @@
 require_once __DIR__ . "/../config/db.php";
 require_once __DIR__ . "/../config/session.php";
 require_once __DIR__ . "/../models/Car.php";
+require_once __DIR__ . "/../models/AdminLog.php";
 
 requireAdmin();
+
+$current = currentUser();
 
 $db = new Database();
 $conn = $db->getConnection();
 
 $carModel = new Car($conn);
+$logModel = new AdminLog($conn);
 
 $error = "";
 $success = "";
 
-// DELETE me POST
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["delete_id"])) {
     $deleteId = (int)$_POST["delete_id"];
 
+    $carToDelete = $carModel->findById($deleteId);
+
     if ($carModel->delete($deleteId)) {
         $success = "Vetura u fshi me sukses.";
+
+        $details = "Car ID: " . $deleteId;
+        if ($carToDelete) {
+            $details .= " | Name: " . ($carToDelete["name"] ?? "");
+            $details .= " | Price: " . ($carToDelete["price"] ?? "");
+            $details .= " | Year: " . ($carToDelete["year"] ?? "");
+        }
+
+        $logModel->add((int)$current["id"], "DELETE_CAR", $details);
     } else {
         $error = "Fshirja dështoi.";
     }
@@ -33,23 +47,36 @@ $cars = $carModel->getAll();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Menaxho Veturat</title>
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
 
-<header>
-    <div class="container navbar">
-        <div class="logo"><a href="dashboard.php">Admin Dashboard</a></div>
-        <nav>
-            <ul>
-                <li><a href="dashboard.php">Dashboard</a></li>
-                <li><a href="add-car.php">Shto Veturë</a></li>
-                <li><a href="../logout.php">Logout</a></li>
-            </ul>
-        </nav>
+<header class="admin-header">
+    <div class="container admin-nav">
+        <div class="admin-logo">
+            <a href="../index.php" style="color:#fff; text-decoration:none;">AutoMarket Admin</a>
+        </div>
+        <div class="admin-user">
+            <?php echo htmlspecialchars($current["full_name"]); ?>
+            <a href="../logout.php">Logout</a>
+        </div>
     </div>
 </header>
 
-<main class="container" style="padding:30px 0;">
+<div class="admin-layout">
+
+    <aside class="admin-sidebar">
+        <a href="dashboard.php">Dashboard</a>
+        <a href="add-car.php">Shto Veturë</a>
+        <a href="cars.php" class="active">Menaxho Veturat</a>
+        <a href="users.php">Menaxho Përdoruesit</a>
+        <a href="sold-cars.php">Veturat e shitura</a>
+        <a href="messages.php">Mesazhet e kontaktit</a>
+        <a href="news.php">Menaxho News</a>
+        <a href="logs.php">Shiko Logs</a>
+    </aside>
+
+    <main class="admin-content">
     <h2>Lista e Veturave</h2>
 
     <?php if ($error !== ""): ?>
@@ -84,7 +111,7 @@ $cars = $carModel->getAll();
                             <a href="edit-car.php?id=<?php echo (int)$car["id"]; ?>">Edit</a>
 
                             <form method="post" style="display:inline;"
-                                onsubmit="return confirm('A je i sigurt që do ta fshish këtë veturë?');">
+                                  onsubmit="return confirm('A je i sigurt që do ta fshish këtë veturë?');">
                                 <input type="hidden" name="delete_id" value="<?php echo (int)$car["id"]; ?>">
                                 <button type="submit" style="margin-left:10px; cursor:pointer; color:#c0392b; background:none; border:none;">
                                     Delete
@@ -101,6 +128,8 @@ $cars = $carModel->getAll();
         <a href="dashboard.php">Kthehu në Dashboard</a>
     </p>
 </main>
+
+</div>
 
 </body>
 </html>

@@ -24,8 +24,9 @@ $user = currentUser();
                 <li><a href="index.php">Kryefaqja</a></li>
                 <li><a href="about.php">Rreth nesh</a></li>
                 <li><a href="cars.php">Makina</a></li>
+                <li><a href="news.php">Lajme</a></li>
 
-                <?php if ($user): ?>
+                <?php if ($user): ?> 
                     <li style="font-weight:600;">
                         <?php echo htmlspecialchars($user["full_name"]); ?>
                     </li>
@@ -46,7 +47,6 @@ $user = currentUser();
 
 <main class="container">
 
-    <!-- HERO -->
     <section class="makina">
         <div class="makina-text">
             <h1>Gjej makinën tënde të ëndrrave</h1>
@@ -55,7 +55,6 @@ $user = currentUser();
         </div>
     </section>
 
-    <!-- SLIDER -->
     <section class="home-slider">
         <h2>Disa nga veturat më të kërkuara</h2>
 
@@ -66,7 +65,6 @@ $user = currentUser();
         </div>
     </section>
 
-    <!-- FEATURES -->
     <section>
         <h2>Pse të zgjidhni AutoMarket?</h2>
 
