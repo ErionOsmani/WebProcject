@@ -2,6 +2,29 @@
 
 class User
 {
+    public function getAll(): array
+{
+    $stmt = $this->db->query("SELECT id, full_name, email, role, created_at FROM users ORDER BY id DESC");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+public function updateRole(int $id, string $role): bool
+{
+    if ($id <= 0) return false;
+    if (!in_array($role, ["admin", "user"], true)) return false;
+
+    $stmt = $this->db->prepare("UPDATE users SET role = ? WHERE id = ?");
+    return $stmt->execute([$role, $id]);
+}
+
+
+public function delete(int $id): bool
+{
+    if ($id <= 0) return false;
+    $stmt = $this->db->prepare("DELETE FROM users WHERE id = ?");
+    return $stmt->execute([$id]);
+}
+
     private PDO $db;
 
     public function __construct(PDO $conn)

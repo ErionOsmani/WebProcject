@@ -25,6 +25,7 @@ if (!$car) {
 $img = trim((string)($car["image"] ?? ""));
 $imgSrc = $img !== "" ? ("uploads/" . $img) : "assets/no-image.png";
 
+
 $price = number_format((float)$car["price"], 0, ",", ".");
 $mileage = number_format((int)$car["mileage"], 0, " ", " ");
 ?>
@@ -89,6 +90,10 @@ $mileage = number_format((int)$car["mileage"], 0, " ", " ");
                 <h3>Përshkrimi</h3>
                 <p><?php echo nl2br(htmlspecialchars($car["description"])); ?></p>
             <?php endif; ?>
+
+        <a class="btn" href="buy.php?id=<?php echo (int)$car["id"]; ?>" style="margin-top:10px; display:inline-block;">
+    Buy
+</a>
         </div>
     </div>
 </main>

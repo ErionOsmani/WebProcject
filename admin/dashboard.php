@@ -42,9 +42,10 @@ $user = currentUser();
     <ul style="margin-top:20px;">
         <li><a href="add-car.php">shto Veturat</a></li>
         <li><a href="cars.php">Menaxho Veturat</a></li>
-
+        <li><a href="users.php">Menaxho Përdoruesit</a></li>
         <li><a href="#">Menaxho Lajmet</a></li>
         <li><a href="#">Mesazhet e Kontaktit</a></li>
+        <li><a href="sold-cars.php">Veturat e shitura</a></li>
     </ul>
 </main>
 
