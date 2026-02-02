@@ -1,4 +1,3 @@
-
 .cars-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -88,4 +87,3 @@
     .cars-grid { grid-template-columns: 1fr; }
     .car-image img { height: 220px; }
 }
-

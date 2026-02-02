@@ -79,7 +79,7 @@ nav a:hover {
 @media (max-width: 768px) {
     .navbar { flex-direction: column; gap: 15px; align-items: stretch; }
 
-    /* Keep menu horizontal on mobile, allow horizontal scrolling if it overflows */
+
     nav { width: 100%; }
     nav ul { flex-direction: row; gap: 12px; align-items: center; justify-content: center; overflow-x: auto; padding: 6px 4px; -webkit-overflow-scrolling: touch; }
     nav ul::-webkit-scrollbar { display: none; }
@@ -88,7 +88,7 @@ nav a:hover {
     h1 { font-size: 1.6rem; text-align: center; margin-top: 20px; }
 }
 
-/* Footer styles */
+
 .site-footer { background: var(--card); color: var(--text-muted); padding: 36px 0 18px; border-top: 1px solid rgba(255,255,255,0.03); }
 .footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; align-items: start; padding-bottom: 14px; }
 .footer-col p, .footer-col li { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
