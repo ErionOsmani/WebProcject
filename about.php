@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . "/config/session.php";
+$user = currentUser();
+?>
+
 <!DOCTYPE html>
 <html lang="sq">
 <head>
@@ -18,8 +23,21 @@
                 <li><a href="index.php">Kryefaqja</a></li>
                 <li><a href="about.php">Rreth nesh</a></li>
                 <li><a href="cars.php">Makina</a></li>
-                <li><a href="login.php">Login</a></li>
-                <li><a href="register.php">Register</a></li>
+
+                <?php if ($user): ?>
+                    <li style="font-weight:600;">
+                        <?php echo htmlspecialchars($user["full_name"]); ?>
+                    </li>
+
+                    <?php if ($user["role"] === "admin"): ?>
+                        <li><a href="admin/dashboard.php">Dashboard</a></li>
+                    <?php endif; ?>
+
+                    <li><a href="logout.php">Logout</a></li>
+                <?php else: ?>
+                    <li><a href="login.php">Login</a></li>
+                    <li><a href="register.php">Register</a></li>
+                <?php endif; ?>
             </ul>
         </nav>
     </div>

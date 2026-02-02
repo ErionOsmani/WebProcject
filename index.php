@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . "/config/session.php";
+$user = currentUser();
+?>
 <!DOCTYPE html>
 <html lang="sq">
 <head>
@@ -6,7 +10,7 @@
     <title>AutoMarket - Shitje Makinash</title>
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/index.css">
-</head> 
+</head>
 <body>
 
 <header>
@@ -14,13 +18,27 @@
         <div class="logo">
             <a href="index.php">AutoMarket</a>
         </div>
+
         <nav>
             <ul>
                 <li><a href="index.php">Kryefaqja</a></li>
                 <li><a href="about.php">Rreth nesh</a></li>
                 <li><a href="cars.php">Makina</a></li>
-                <li><a href="login.php">Login</a></li>
-                <li><a href="register.php">Register</a></li>
+
+                <?php if ($user): ?>
+                    <li style="font-weight:600;">
+                        <?php echo htmlspecialchars($user["full_name"]); ?>
+                    </li>
+
+                    <?php if ($user["role"] === "admin"): ?>
+                        <li><a href="admin/dashboard.php">Dashboard</a></li>
+                    <?php endif; ?>
+
+                    <li><a href="logout.php">Logout</a></li>
+                <?php else: ?>
+                    <li><a href="login.php">Login</a></li>
+                    <li><a href="register.php">Register</a></li>
+                <?php endif; ?>
             </ul>
         </nav>
     </div>
@@ -28,7 +46,7 @@
 
 <main class="container">
 
-    <!-- FILLIMI -->
+    <!-- HERO -->
     <section class="makina">
         <div class="makina-text">
             <h1>Gjej makinën tënde të ëndrrave</h1>
@@ -37,15 +55,14 @@
         </div>
     </section>
 
-
-    
+    <!-- SLIDER -->
     <section class="home-slider">
-                <h2>Disa nga veturat më të kërkuara</h2>
+        <h2>Disa nga veturat më të kërkuara</h2>
 
         <div class="slider" id="homeSlider">
-            <img src="./assets/e30.jpg" class="slide active" alt="">
-            <img src="./assets/Trock.jpg" class="slide" alt="">
-            <img src="./assets/xc90.jpg" class="slide" alt="">
+            <img src="assets/e30.jpg" class="slide active" alt="">
+            <img src="assets/Trock.jpg" class="slide" alt="">
+            <img src="assets/xc90.jpg" class="slide" alt="">
         </div>
     </section>
 
@@ -118,8 +135,10 @@
             <h4>Ndihmë</h4>
             <ul>
                 <li><a href="contact.php">Kontakt</a></li>
-                <li><a href="login.php">Login</a></li>
-                <li><a href="register.php">Register</a></li>
+                <?php if (!$user): ?>
+                    <li><a href="login.php">Login</a></li>
+                    <li><a href="register.php">Register</a></li>
+                <?php endif; ?>
             </ul>
         </div>
 
@@ -135,25 +154,20 @@
     </div>
 </footer>
 
-<!-- SLIDER  -->
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const slides = document.querySelectorAll("#homeSlider .slide");
     if (slides.length === 0) return;
 
     let index = 0;
-    const intervalTime = 4000; 
 
-    function nextSlide() {
+    setInterval(() => {
         slides[index].classList.remove("active");
         index = (index + 1) % slides.length;
         slides[index].classList.add("active");
-    }
-    setInterval(nextSlide, intervalTime);
+    }, 4000);
 });
 </script>
-
 
 </body>
 </html>
