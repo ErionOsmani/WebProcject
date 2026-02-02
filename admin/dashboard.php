@@ -38,7 +38,7 @@ $user = currentUser();
     <p>Mirësevjen, <strong><?php echo htmlspecialchars($user["full_name"]); ?></strong></p>
 
     <ul style="margin-top:20px;">
-        <li><a href="#">Menaxho Veturat</a></li>
+        <li><a href="add-car.php">Menaxho Veturat</a></li>
         <li><a href="#">Menaxho Lajmet</a></li>
         <li><a href="#">Mesazhet e Kontaktit</a></li>
     </ul>

@@ -1,23 +1,32 @@
 <?php
+require_once __DIR__ . "/config/db.php";
 require_once __DIR__ . "/config/session.php";
-$user = currentUser();
-?>
 
+$user = currentUser();
+
+$db = new Database();
+$conn = $db->getConnection();
+
+$stmt = $conn->query("SELECT id, name, price, year, fuel, transmission, mileage, description, image FROM cars ORDER BY id DESC");
+$cars = $stmt->fetchAll();
+?>
 <!DOCTYPE html>
 <html lang="sq">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Makina në shitje - AutoMarket</title>
+    <title>Makina - AutoMarket</title>
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/cars.css">
-</head> 
+</head>
 <body>
+
 <header>
     <div class="container navbar">
         <div class="logo">
             <a href="index.php">AutoMarket</a>
         </div>
+
         <nav>
             <ul>
                 <li><a href="index.php">Kryefaqja</a></li>
@@ -29,7 +38,7 @@ $user = currentUser();
                         <?php echo htmlspecialchars($user["full_name"]); ?>
                     </li>
 
-                    <?php if ($user["role"] === "admin"): ?>
+                    <?php if (($user["role"] ?? "") === "admin"): ?>
                         <li><a href="admin/dashboard.php">Dashboard</a></li>
                     <?php endif; ?>
 
@@ -43,136 +52,49 @@ $user = currentUser();
     </div>
 </header>
 
-<main class="container">
-    <section>
-        <h1>Makina në shitje</h1>
-        <p>Zgjidh nga ofertat tona më të fundit:</p>
+<main class="container" style="padding: 30px 0;">
+    <h2>Lista e makinave</h2>
 
+    <?php if (empty($cars)): ?>
+        <p>Nuk ka ende vetura të regjistruara.</p>
+    <?php else: ?>
         <div class="cars-grid">
-            <article class="card">
-                <img src="./assets/bmw3series2018.jpg" alt="BMW 3 Series">
-                <div class="card-body">
-                    <h3>BMW 320d 2018</h3>
-                    <p>Automatik · Dizel · 120 000 km</p>
-                    <p class="price">€18,500</p>
-                    <a href="car-detail.php" class="btn">Shiko detajet</a>
+            <?php foreach ($cars as $car): ?>
+                <?php
+                    $img = trim((string)($car["image"] ?? ""));
+                    // Nëse ruan vetëm emrin e fotos në DB, zakonisht e mban te: uploads/
+                    // Ndrysho path-in nëse ti i mban diku tjetër.
+                    $imgSrc = $img !== "" ? ("uploads/" . $img) : "assets/no-image.png";
+
+                    $shortDesc = trim((string)($car["description"] ?? ""));
+                    if (mb_strlen($shortDesc) > 120) {
+                        $shortDesc = mb_substr($shortDesc, 0, 120) . "...";
+                    }
+
+                    // Formatim i thjeshtë i çmimit
+                    $price = number_format((float)$car["price"], 0, ",", ".");
+                ?>
+
+                <div class="car-card">
+                    <div class="car-image">
+                        <img src="<?php echo htmlspecialchars($imgSrc); ?>" alt="">
+                    </div>
+
+                    <div class="car-content">
+                        <h3><?php echo htmlspecialchars($car["name"]); ?></h3>
+
+                        <p><strong>Çmimi:</strong> €<?php echo $price; ?></p>
+                        <p><strong>Viti:</strong> <?php echo htmlspecialchars($car["year"]); ?></p>
+                        <p><strong>Karburanti:</strong> <?php echo htmlspecialchars($car["fuel"]); ?></p>
+                        <p><strong>Transmisioni:</strong> <?php echo htmlspecialchars($car["transmission"]); ?></p>
+                        <p><strong>Kilometrazhi:</strong> <?php echo number_format((int)$car["mileage"], 0, " ", " "); ?> km</p>
+
+                        <a class="btn" href="car-detail.php?id=<?php echo (int)$car["id"]; ?>">Shiko detajet</a>
+                    </div>
                 </div>
-            </article>
-
-            <article class="card">
-                <img src="./assets/GolfMk7.avif" alt="VW Golf 7">
-                <div class="card-body">
-                    <h3>VW Golf 7 2017</h3>
-                    <p>Manual · Dizel · 140 000 km</p>
-                    <p class="price">€10,900</p>
-                    <a href="car-detail.php" class="btn">Shiko detajet</a>
-                </div>
-            </article>
-
-
-            <article class="card">
-                <img src="./assets/Used-2019-Audi-A4-20T-quattro-Premium.jpg" alt="Audi A4">
-                <div class="card-body">
-                    <h3>Audi A4 2019</h3>
-                    <p>Automatik · Benzinë · 90 000 km</p>
-                    <p class="price">€21,300</p>
-                    <a href="car-detail.php" class="btn">Shiko detajet</a>
-                </div>
-            </article>
-            
-
-            <article class="card">
-                <img src="./assets/mercedesC.jpg" alt="Mercedes C">
-                <div class="card-body">
-                    <h3>Mercedes C 2016</h3>
-                    <p>Automatik · Benzinë · 110 000 km</p>
-                    <p class="price">€15,800</p>
-                    <a href="car-detail.php" class="btn">Shiko detajet</a>
-                </div>
-            </article>
-
-
-            <article class="card">
-                <img src="./assets/ToyotaCorolla.jpg" alt="Toyota Corolla">
-                <div class="card-body">
-                    <h3>Toyota Corolla 2015</h3>
-                    <p>Manual · Benzinë · 130 000 km</p>
-                    <p class="price">€9,500</p>
-                    <a href="car-detail.php" class="btn">Shiko detajet</a>
-                </div>
-            </article>
-
-
-            <article class="card">
-                <img src="./assets/FordFocus.jpg" alt="Ford Focus">
-                <div class="card-body">
-                    <h3>Ford Focus 2018</h3>
-                    <p>Manual · Benzinë · 95 000 km</p>
-                    <p class="price">€11,200</p>
-                    <a href="car-detail.php" class="btn">Shiko detajet</a>
-                </div>
-            </article>
-
-
-            <article class="card">
-                <img src="./assets/2023-hyundai-ioniq-5-sel-awd-4dr-crossover.jpg" alt="Hyundai Ioniq">
-                <div class="card-body">
-                    <h3>Hyundai Ioniq 2020</h3>
-                    <p>Automatik · Hibrid · 60 000 km</p>
-                    <p class="price">€17,900</p>
-                    <a href="car-detail.php" class="btn">Shiko detajet</a>
-                </div>
-            </article>
-
-            <article class="card">
-                <img src="./assets/Skoda.jpg" alt="Skoda Octavia">
-                <div class="card-body">
-                    <h3>Skoda Octavia 2017</h3>
-                    <p>Manual · Dizel · 150 000 km</p>
-                    <p class="price">€10,400</p>
-                    <a href="car-detail.php" class="btn">Shiko detajet</a>
-                </div>
-            </article>
-
-
-            <article class="card">
-                <img src="./assets/RenoClio.jpg" alt="Renault Clio">
-                <div class="card-body">
-                    <h3>Renault Clio 2019</h3>
-                    <p>Manual · Benzinë · 55 000 km</p>
-                    <p class="price">€8,700</p>
-                    <a href="car-detail.php" class="btn">Shiko detajet</a>
-                </div>
-            </article>
-                        <article class="card">
-                <img src="./assets/xc90.jpg" alt="Volvo XC90">
-                <div class="card-body">
-                    <h3>Volvo XC90 2020</h3>
-                    <p>Automatik · Hibrid · 32 000 km</p>
-                    <p class="price">€32,900</p>
-                    <a href="car-detail.php" class="btn">Shiko detajet</a>
-                </div>
-            </article>
-                        <article class="card">
-                <img src="./assets/Trock.jpg" alt="T-Rock">
-                <div class="card-body">
-                    <h3>Voltswagen T-Rock 2020</h3>
-                    <p>Automatik · Diesel · 88 000 km</p>
-                    <p class="price">€28,000</p>
-                    <a href="car-detail.php" class="btn">Shiko detajet</a>
-                </div>
-            </article>
-                        <article class="card">
-                <img src="./assets/e30.jpg" alt="BMW KOCK">
-                <div class="card-body">
-                    <h3>BMW Kock E30</h3>
-                    <p>Automatik · Benzin · 210 000 km</p>
-                    <p class="price">€14,700</p>
-                    <a href="car-detail.php" class="btn">Shiko detajet</a>
-                </div>
-            </article>
+            <?php endforeach; ?>
         </div>
-    </section>
+    <?php endif; ?>
 </main>
 
 <footer class="site-footer">
@@ -195,8 +117,10 @@ $user = currentUser();
             <h4>Ndihmë</h4>
             <ul>
                 <li><a href="contact.php">Kontakt</a></li>
-                <li><a href="login.php">Login</a></li>
-                <li><a href="register.php">Register</a></li>
+                <?php if (!$user): ?>
+                    <li><a href="login.php">Login</a></li>
+                    <li><a href="register.php">Register</a></li>
+                <?php endif; ?>
             </ul>
         </div>
 
@@ -211,5 +135,6 @@ $user = currentUser();
         <p>&copy; 2025 AutoMarket. Të gjitha të drejtat e rezervuara.</p>
     </div>
 </footer>
+
 </body>
 </html>
